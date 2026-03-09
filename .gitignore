@@ -1,0 +1,13 @@
+# env
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# data artifacts
+data/
+*.index
+
+# OS
+.DS_Store
