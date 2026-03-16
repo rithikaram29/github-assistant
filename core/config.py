@@ -6,6 +6,7 @@ def env(name: str, default: str | int | None = None) -> str | int | None:
 
 GITHUB_USERNAME = env("GITHUB_USERNAME")
 GITHUB_TOKEN = env("GITHUB_TOKEN")
+EMBED_MODEL = env("EMBED_MODEL")
 
 # LLM (local for now)
 OLLAMA_BASE_URL = env("OLLAMA_BASE_URL", "http://localhost:11434")

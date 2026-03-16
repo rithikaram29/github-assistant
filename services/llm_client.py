@@ -6,7 +6,7 @@ class LLMClient:
     def generate(self, prompt: str) -> str:
         raise NotImplementedError
     
-class OllamaClient(LLMClient):
+class OllamaClient(LLMClient):          ## use free api tokens
     def __init__(self, base_url: str,model: str, timeout_s: int = 120):
         self.base_url = base_url.rstrip("/")
         self.model = model
