@@ -1,3 +1,4 @@
+import traceback
 from typing import List, Tuple
 from services.index import IndexStore, Chunk
 from services.llm_client import LLMClient
@@ -48,15 +49,26 @@ class RAGService:
         self.llm = llm
         
     def ask(self, question: str, top_k:int) -> Tuple[str, List[Source]]:
+        print(f"\n[RAG] question: {question!r}  top_k={top_k}")
+
         chunks: List[Chunk] = []
         try:
             if self.index.is_ready():
                 chunks = self.index.search(question, top_k=top_k)
-        except:
-            # We'll improve error handling later; keep API stable for now.
+                print(f"[RAG] retrieved {len(chunks)} chunk(s):")
+                for i, ch in enumerate(chunks, 1):
+                    title = ch.meta.get("title") or ch.meta.get("repo") or ch.id
+                    print(f"  [{i}] {title}")
+            else:
+                print("[RAG] index not ready — skipping retrieval")
+        except Exception as e:
+            print(f"[RAG] retrieval error: {type(e).__name__}: {e}")
+            traceback.print_exc()
             chunks = []
-        
-        prompt = build_prompt(question,chunks)
+
+        prompt = build_prompt(question, chunks)
+        print(f"[RAG] sending prompt ({len(prompt)} chars) to LLM ...")
         answer = self.llm.generate(prompt)
+        print(f"[RAG] answer ({len(answer)} chars): {answer[:120]!r}{'...' if len(answer) > 120 else ''}")
         return answer, chunks_to_sources(chunks)
         
