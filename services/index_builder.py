@@ -36,7 +36,7 @@ def fetch_repos(username: str) -> List[Dict[str, Any]]:
     return resp.json()
 
 def fetch_readme(owner: str, repo: str) -> str:
-    url = f"https://api.github.com/repos{owner}/{repo}/readme"
+    url = f"https://api.github.com/repos/{owner}/{repo}/readme"
     resp = requests.get(url, headers=github_headers(), timeout=30)
     
     if resp.status_code == 404:
@@ -120,7 +120,7 @@ def build_repo_document(repo:Dict[str, Any], readme: str, languages: List[str]) 
     owner = repo["owner"]["login"]
     repo_name = repo["name"]
     description = repo.get("description") or ""
-    topics = repo.get("topics") or ""
+    topics = repo.get("topics") or []
     html_url = repo.get("html_url")
     updated_at = repo.get("updated_at")
     
@@ -155,6 +155,9 @@ README:
 
 def save_index(chunks: List[Dict[str, Any]], embedder) -> None:
     os.makedirs(DATA_DIR, exist_ok=True)
+
+    if not chunks:
+        raise ValueError("No repositories found to index")
 
     texts = [c["text"] for c in chunks]
 
